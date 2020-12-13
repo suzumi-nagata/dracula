@@ -764,8 +764,8 @@ read it before opening a new issue about your will.")
          'dracula
          (let ((color-names (mapcar #'car colors))
                (graphic-colors (mapcar #'cadr colors))
-               (term-colors (mapcar #'car (mapcar #'cddr colors)))
-               (tty-colors (mapcar #'car (mapcar #'last colors)))
+               (term-colors (mapcar #'caddr colors))
+               (tty-colors (mapcar #'cadddr colors))
                (expand-for-kind
                 (lambda (kind spec)
                   (when (and (string= (symbol-name kind) "term-colors")
