@@ -780,7 +780,23 @@ read it before opening a new issue about your will.")
                                (((min-colors 256))      ; terminal withs 256 colors
                                 ,(funcall expand-for-kind 'term-colors spec))
                                (t                       ; should be only tty-like envs
-                                ,(funcall expand-for-kind 'tty-colors spec))))))))
+                                ,(funcall expand-for-kind 'tty-colors spec)))))))
+  (apply #'custom-theme-set-variables
+         'dracula
+         (let ((get-fun
+                (cond ((min-colors 16777216) 'car) ; fully graphical envs
+                      ((min-colors 256) 'cadr)     ; terminal withs 256 colors
+                      (t 'caddr)))                 ; should be only tty-like envs
+               (get-color
+                #'(lambda (name) (apply get-fun (alist-get name colors)))))
+           `(ansi-color-names-vector [,(get-color 'dracula-bg)
+                                      ,(get-color 'dracula-red)
+                                      ,(get-color 'dracula-green)
+                                      ,(get-color 'dracula-yellow)
+                                      ,(get-color 'dracula-comment)
+                                      ,(get-color 'dracula-purple)
+                                      ,(get-color 'dracula-cyan)
+                                      ,(get-color 'dracula-fg)]))))
 
 
 ;;;###autoload
