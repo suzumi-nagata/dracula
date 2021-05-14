@@ -14,7 +14,6 @@
 ;; A dark color theme available for a number of editors.
 
 ;;; Code:
-(require 'cl-lib)
 (deftheme dracula)
 
 
@@ -767,17 +766,23 @@ read it before opening a new issue about your will.")
 
   (apply #'custom-theme-set-faces
          'dracula
-         (let ((color-names (mapcar #'car colors))
-               (graphic-colors (mapcar #'cadr colors))
-               (term-colors (mapcar #'car (mapcar #'cddr colors)))
-               (tty-colors (mapcar #'car (mapcar #'last colors)))
-               (expand-for-kind
+         (let ((expand-for-kind
                 (lambda (kind spec)
-                  (when (and (string= (symbol-name kind) "term-colors")
+                  (when (and (eq kind 'term-colors)
                              dracula-use-24-bit-colors-on-256-colors-terms)
                     (setq kind 'graphic-colors))
                   (cl-progv color-names (symbol-value kind)
-                    (eval `(backquote ,spec))))))
+                    (eval `(backquote ,spec)))))
+               color-names graphic-colors term-colors tty-colors
+               final-theme)
+           (dolist (spec colors)
+             (push (car spec) color-names)
+             (push (cadr spec) graphic-colors)
+             (push (caddr spec) term-colors)
+             (push (cadddr spec) tty-colors))
+           (pcase-dolist (`(,face . ,spec) faces)
+             (push `(,face ))
+             )
            (cl-loop for (face . spec) in faces
                     collect `(,face
                               ((((min-colors 16777216)) ; fully graphical envs
